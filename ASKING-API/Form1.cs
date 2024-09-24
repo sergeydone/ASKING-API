@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using RestSharp;
+using RestSharp.Authenticators;
 using System.Xml.Linq;
+using System.Threading;
 
 namespace ASKING_API
 {
@@ -68,43 +70,36 @@ namespace ASKING_API
     {
         public static bool Get(string address, string au, string body, string dateTimeReplacement, string filePath)
         {
-            // Create a RestClient object with the base URL
-            var myClient = new RestClient(address);
-            //myClient.Timeout = -1;
-
-            // Create a RestRequest object with the endpoint and method
-            var myRequest = new RestRequest();
+            //// var myClient = new RestClient(address);
+            //// var myRequest = new RestRequest();
 
             ////var modifiedBody = body.Replace("20240101", dateTimeReplacement);
 
-            // Add body content as JSON
             /*var myBody = new
             {
                 body
             };*/
 
-            var myBody = body;
-
+            ////var myBody = body;
             ////myRequest.AddJsonBody(myBody);
 
-            var param = new  { IntData = 1, StringData = "test123" };
-            //myRequest.AddJsonBody(param);
-            
-            // Optionally, add headers
-            // myRequest.AddHeader("Authorization", au);
-            //myRequest.AddHeader("Content-Type", "application/json");
+            //// var myResponse = myClient.Execute(myRequest);
+            //// File.WriteAllText(filePath, myResponse.Content);
 
-                        // Execute the request and get the response
-                        var myResponse = myClient.Execute(myRequest);
-
-                        // Output the response content
-                        /*Console.WriteLine("sending query to: " + address);
-                        Console.WriteLine("with header: Authorization" + au);
-                        Console.WriteLine("with body: " + body);
-                        Console.WriteLine("progress resuil is: ");
-                        Console.WriteLine(myResponse.Content);
-                        Console.WriteLine("saving result into: " + filePath);*/
-                        File.WriteAllText(filePath, myResponse.Content);
+            var options = new RestClientOptions(address)
+            {
+                Authenticator = new HttpBasicAuthenticator("username", "password")
+            };
+            var client = new RestClient(options);
+            var requestBody = new
+            {
+                key1 = "value1",
+                key2 = "value2",
+            };
+            var request = new RestRequest().AddJsonBody(requestBody);
+           
+            var response = client.Execute(request);
+           
             return true;
 
         }
