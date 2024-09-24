@@ -31,8 +31,10 @@ namespace ASKING_API
             var user = XMLReader.ReadTagValue(configFilePath, "Config", "Header", "User");
             var pass = XMLReader.ReadTagValue(configFilePath, "Config", "Header", "Pathword");
             var body = XMLReader.ReadTagValue(configFilePath, "Config", "Body", "Body");
+            var method = XMLReader.ReadTagValue(configFilePath, "Config", "Body", "Method");
             var date = dateTimePicker1.Value;
-            var dateTime = date.ToString("yyyyMMbb");
+            var dateTime = date.ToString("yyyyMMdd");
+            
             informer = informer +
             "\n sending query to: " + address +
             "\n with header: user" + user +
@@ -40,7 +42,7 @@ namespace ASKING_API
             "\n saving result into: " + resultFilePath;
             label1.Text = informer;
 
-            var query = RestQuery.Get(address, user, pass, body, dateTime, resultFilePath);
+            var query = RestQuery.Get(address, user, pass, body, method, dateTime, resultFilePath);
             label1.Text = informer + "\n " + query.ToString();
         }
     }
@@ -69,33 +71,21 @@ namespace ASKING_API
 
     public class RestQuery
     {
-        public static bool Get(string address, string user, string pass,  string body, string dateTimeReplacement, string filePath)
+        public static bool Get(string address, string user, string pass,  string body, string method, string dateTimeReplacement, string filePath)
         {
-            //// var myClient = new RestClient(address);
-            //// var myRequest = new RestRequest();
-
-            ////var modifiedBody = body.Replace("20240101", dateTimeReplacement);
-
-            /*var myBody = new
-            {
-                body
-            };*/
-
-            ////var myBody = body;
-            ////myRequest.AddJsonBody(myBody);
-
-            //// var myResponse = myClient.Execute(myRequest);
-            //// 
-
+            var modifiedBody = body.Replace("20240101", dateTimeReplacement);
+                       
             var options = new RestClientOptions(address)
-            {
+           {
                 Authenticator = new HttpBasicAuthenticator(user, pass)
             };
             var client = new RestClient(options);
 
-            
             var request = new RestRequest();
-            request.AddStringBody(body, ContentType.Json); 
+            if (method.ToUpper() == "POST") request = new RestRequest("", Method.Post);
+            if (method.ToUpper() == "GET") request = new RestRequest("", Method.Get);
+
+            request.AddStringBody(modifiedBody, DataFormat.Json); 
 
             var response = client.Execute(request);
 
