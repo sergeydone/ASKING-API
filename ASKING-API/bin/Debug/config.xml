@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<RestQuery RestQueryNumber="00001" RestQueryDate="2024-09-20">
+<Configs>
+<Config Type="Server">
+<Address>https://jsonplaceholder.typicode.com/posts</Address>
+</Config>
+<Config Type="Header">
+<Content-Type>application/json</Content-Type>
+<Authorization>Basic 111</Authorization>
+</Config>
+<Config Type="Body">
+<Body>"type": "function", "argument": "'20240330'" </Body>
+</Config>
+</Configs>
+</RestQuery>
