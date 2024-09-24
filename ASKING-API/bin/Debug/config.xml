@@ -6,7 +6,8 @@
 </Config>
 <Config Type="Header">
 <Content-Type>application/json</Content-Type>
-<Authorization>Basic 111</Authorization>
+<User>Name</User>
+<Pathword>Path</Pathword>
 </Config>
 <Config Type="Body">
 <Body>"type": "function", "argument": "'20240330'" </Body>

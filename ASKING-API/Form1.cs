@@ -28,18 +28,19 @@ namespace ASKING_API
             var configFilePath = @"config.xml";
             var resultFilePath = @"result.txt";
             var address = XMLReader.ReadTagValue(configFilePath, "Config", "Server", "Address");
-            var header = XMLReader.ReadTagValue(configFilePath, "Config", "Header", "Authorization");
+            var user = XMLReader.ReadTagValue(configFilePath, "Config", "Header", "User");
+            var pass = XMLReader.ReadTagValue(configFilePath, "Config", "Header", "Pathword");
             var body = XMLReader.ReadTagValue(configFilePath, "Config", "Body", "Body");
             var date = dateTimePicker1.Value;
             var dateTime = date.ToString("yyyyMMbb");
             informer = informer +
             "\n sending query to: " + address +
-            "\n with header: Authorization" + header +
+            "\n with header: user" + user +
             "\n with body: " + body +
             "\n saving result into: " + resultFilePath;
             label1.Text = informer;
 
-            var query = RestQuery.Get(address, header, body, dateTime, resultFilePath);
+            var query = RestQuery.Get(address, user, pass, body, dateTime, resultFilePath);
             label1.Text = informer + "\n " + query.ToString();
         }
     }
@@ -68,7 +69,7 @@ namespace ASKING_API
 
     public class RestQuery
     {
-        public static bool Get(string address, string au, string body, string dateTimeReplacement, string filePath)
+        public static bool Get(string address, string user, string pass,  string body, string dateTimeReplacement, string filePath)
         {
             //// var myClient = new RestClient(address);
             //// var myRequest = new RestRequest();
@@ -84,22 +85,22 @@ namespace ASKING_API
             ////myRequest.AddJsonBody(myBody);
 
             //// var myResponse = myClient.Execute(myRequest);
-            //// File.WriteAllText(filePath, myResponse.Content);
+            //// 
 
             var options = new RestClientOptions(address)
             {
-                Authenticator = new HttpBasicAuthenticator("username", "password")
+                Authenticator = new HttpBasicAuthenticator(user, pass)
             };
             var client = new RestClient(options);
-            var requestBody = new
-            {
-                key1 = "value1",
-                key2 = "value2",
-            };
-            var request = new RestRequest().AddJsonBody(requestBody);
-           
+
+            
+            var request = new RestRequest();
+            request.AddStringBody(body, ContentType.Json); 
+
             var response = client.Execute(request);
-           
+
+            File.WriteAllText(filePath, response.Content);
+
             return true;
 
         }
