@@ -6,12 +6,12 @@
 </Config>
 <Config Type="Header">
 <Content-Type>application/json</Content-Type>
-<User>User</User>
+<User>Name</User>
 <Pathword>Path</Pathword>
 </Config>
 <Config Type="Body">
 <Method>Get</Method>
-<Body>"type": "function"</Body>
+<Body>"type": "function", "argument": "'20240101'" </Body>
 </Config>
 </Configs>
 </RestQuery>

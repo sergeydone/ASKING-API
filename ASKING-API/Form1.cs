@@ -37,9 +37,9 @@ namespace ASKING_API
             
             informer = informer +
             "\n sending query to: " + address +
-            "\n with header: user" + user +
+            "\n with username: " + user +
             "\n with body: " + body +
-            "\n saving result into: " + resultFilePath;
+            "\n and will save result into : " + resultFilePath;
             label1.Text = informer;
 
             var query = RestQuery.Get(address, user, pass, body, method, dateTime, resultFilePath);
@@ -71,29 +71,42 @@ namespace ASKING_API
 
     public class RestQuery
     {
-        public static bool Get(string address, string user, string pass,  string body, string method, string dateTimeReplacement, string filePath)
+        public static string Get(string address, string user, string pass,  string body, string method, string dateTimeReplacement, string filePath)
         {
-            var modifiedBody = body.Replace("20240101", dateTimeReplacement);
-                       
-            var options = new RestClientOptions(address)
-           {
-                Authenticator = new HttpBasicAuthenticator(user, pass)
-            };
-            var client = new RestClient(options);
+            var client = new RestClient(address);
+
+            if (user.Length > 2)
+            {
+                var options = new RestClientOptions(address)
+                {
+                    Authenticator = new HttpBasicAuthenticator(user, pass)
+                };
+                client = new RestClient(options);
+            }
 
             var request = new RestRequest();
+
             if (method.ToUpper() == "POST") request = new RestRequest("", Method.Post);
             if (method.ToUpper() == "GET") request = new RestRequest("", Method.Get);
 
-            request.AddStringBody(modifiedBody, DataFormat.Json); 
+            if (body.Length > 1)
+            {
+                var modifiedBody = body.Replace("20240101", dateTimeReplacement);
+               
+                request.AddStringBody(modifiedBody, DataFormat.Json);
+            }
 
             var response = client.Execute(request);
 
             File.WriteAllText(filePath, response.Content);
 
-            return true;
+            var result = "";
 
+            if (response.ErrorMessage != null) result = result + response.ErrorMessage.ToString();
+            else result = result + response.StatusCode.ToString();
+            return result;
         }
     }
+
 
 }
